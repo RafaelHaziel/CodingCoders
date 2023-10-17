@@ -1,0 +1,96 @@
+-- Crie o banco de dados
+CREATE DATABASE CodingCoders;
+
+-- Use o banco de dados
+USE CodingCoders;
+
+-- Tabela de Usuários
+CREATE TABLE Usuarios (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioNome VARCHAR(255) NOT NULL,
+    UsuarioSenha VARCHAR(255) NOT NULL,
+    UsuarioNomeCompleto VARCHAR(255) NOT NULL,
+	UsuarioEmail VARCHAR(255) NOT NULL,
+    UsuarioFotoPerfil VARCHAR(255),
+    UsuarioDescricao VARCHAR(255)
+);
+
+-- Tabela de Postagens
+CREATE TABLE Postagens (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    UsuarioID INT NOT NULL,
+    PostagemTipo ENUM('Comentario', 'Imagem') NOT NULL,
+    PostagemConteudo TEXT NOT NULL,
+    PostagemDataHora TIMESTAMP NOT NULL,
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(ID)
+);
+
+-- Tabela de Comentários
+CREATE TABLE Comentarios (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    PostagemID INT NOT NULL,
+    UsuarioID INT NOT NULL,
+    ComentarioConteudo TEXT NOT NULL,
+    ComentarioDataHora TIMESTAMP NOT NULL,
+    FOREIGN KEY (PostagemID) REFERENCES Postagens(ID),
+    FOREIGN KEY (UsuarioID) REFERENCES Usuarios(ID)
+);
+
+-- Tabela de Amigos
+CREATE TABLE Amigos (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    AmigosSolicitanteID INT NOT NULL,
+    AmigosAceitanteID INT NOT NULL,
+    AmigosStatus ENUM('Pendente', 'Aceito', 'Recusado') NOT NULL,
+    FOREIGN KEY (AmigosSolicitanteID) REFERENCES Usuarios(ID),
+    FOREIGN KEY (AmigosAceitanteID) REFERENCES Usuarios(ID)
+);
+
+-- Tabela de Mensagens Privadas
+CREATE TABLE MensagensPrivadas (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    MensagensPrivadasRemetenteID INT NOT NULL,
+    MensagensPrivadasDestinatarioID INT NOT NULL,
+    MensagensPrivadasConteudo TEXT NOT NULL,
+    MensagensPrivadasDataHora TIMESTAMP NOT NULL,
+    FOREIGN KEY (MensagensPrivadasRemetenteID) REFERENCES Usuarios(ID),
+    FOREIGN KEY (MensagensPrivadasDestinatarioID) REFERENCES Usuarios(ID)
+);
+
+-- Tabela de Imagens de Postagens
+CREATE TABLE ImagensPostagens (
+    ID INT AUTO_INCREMENT PRIMARY KEY,
+    PostagemID INT NOT NULL,
+    ImagensPostagensCaminhoImagem VARCHAR(255) NOT NULL,
+    ImagensPostagensDescricaoImagem TEXT,
+    ImagensPostagensDataHoraUpload TIMESTAMP NOT NULL,
+    FOREIGN KEY (PostagemID) REFERENCES Postagens(ID)
+);
+
+-- Inserir informações fictícias de 5 usuários
+INSERT INTO Usuarios (UsuarioNome, UsuarioSenha, UsuarioNomeCompleto, UsuarioEmail, UsuarioFotoPerfil, UsuarioDescricao)
+VALUES
+  ('user1', 'senha1', 'João Silva', 'joao@example.com', 'perfil1.jpg', 'Programador experiente'),
+  ('user2', 'senha2', 'Maria Santos', 'maria@example.com', 'perfil2.jpg', 'Desenvolvedora front-end'),
+  ('user3', 'senha3', 'Pedro Alves', 'pedro@example.com', 'perfil3.jpg', 'Estudante de ciência da computação'),
+  ('user4', 'senha4', 'Ana Lima', 'ana@example.com', 'perfil4.jpg', 'Engenheira de software'),
+  ('user5', 'senha5', 'Carlos Fernandes', 'carlos@example.com', 'perfil5.jpg', 'Desenvolvedor de back-end');
+
+-- Inserir postagens fictícias para esses usuários
+INSERT INTO Postagens (UsuarioID, PostagemTipo, PostagemConteudo, PostagemDataHora)
+VALUES
+  (1, 'Comentario', 'Primeira postagem de João.', NOW()),
+  (2, 'Comentario', 'Trabalhando em um novo projeto de website.', NOW()),
+  (3, 'Imagem', 'projeto3.jpg', NOW()),
+  (4, 'Imagem', 'projeto4.jpg', NOW()),
+  (5, 'Comentario', 'Trabalhando em uma API REST.', NOW());
+
+-- Inserir comentários fictícios em algumas postagens
+INSERT INTO Comentarios (PostagemID, UsuarioID, ComentarioConteudo, ComentarioDataHora)
+VALUES
+  (1, 2, 'Bom começo, João!', NOW()),
+  (1, 4, 'Continue assim!', NOW()),
+  (2, 3, 'Gostaria de ajudar, Maria.', NOW()),
+  (3, 1, 'Olá Pedro, parece interessante.', NOW()),
+  (4, 5, 'Ótimo projeto, Ana!', NOW());
+
